@@ -11,13 +11,14 @@ final class CinemaListTableViewCell: UITableViewCell {
     private var cinemaDescriptionLabel = UILabel()
     private var cinemaNameLabel = UILabel()
     private var ratingLabel = UILabel()
-    private var countOfVote = UILabel()
+    private var countOfVoteLabel = UILabel()
+    private var actionHandler: TapAction?
+    private var cinemaDescriprion: DescriptionScreenHelper?
 
     // MARK: Init
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .none
     }
 
     @available(*, unavailable)
@@ -27,51 +28,25 @@ final class CinemaListTableViewCell: UITableViewCell {
 
     // MARK: - Public methods
 
-    func configureCell(model: Result) {
-        configureCinemaAvatarImageView(model: model)
-        configureCinemaNameLabel(model: model)
-        configureCinemaDescriptionLabel(model: model)
-        configureRatingLabel(model: model)
-        configureVoteLabel(model: model)
-
-        print("nil model")
-
-        DispatchQueue.main.async {
-            let urlString =
-                "https://api.themoviedb.org/3/configuration?api_key=c7f7d1dc5a6aa58fd2f3602748ad9c64"
-            guard let url = URL(string: urlString) else { print("url nil"); return }
-            let request = URLRequest(url: url)
-            URLSession.shared.dataTask(with: request) { data, _, _ in
-                do {
-                    guard let result = try String(data: data ?? Data(), encoding: .isoLatin1)
-                    else { return }
-                } catch {
-                    print("nil error")
-                }
-            }.resume()
-        }
-
-        DispatchQueue.main.async {
-            let urlString = "https://image.tmdb.org/t/p/w500/\(model.posterPath)"
-            guard let url = URL(string: urlString) else { return }
-            let request = URLRequest(url: url)
-            URLSession.shared.dataTask(with: request) { data, result, _ in
-                do {
-                    print("nil result \(urlString)")
-                    guard let result = try UIImage(data: data ?? Data()) else { return }
-                    DispatchQueue.main.async {
-                        self.cinemaAvatarImageView.image = result
-                    }
-                } catch {
-                    print("nil error")
-                }
-            }.resume()
-        }
+    func configureCell(
+        description: DescriptionScreenHelper,
+        handler: TapAction?
+    ) {
+        actionHandler = handler
+        cinemaDescriprion = description
+        guard let cinemaHelper = cinemaDescriprion else { return }
+        configureCinemaAvatarImageView(imageData: cinemaHelper.imageData)
+        configureCinemaNameLabel(title: cinemaHelper.title)
+        configureCinemaDescriptionLabel(modelOverview: cinemaHelper.modelOverview)
+        configureRatingLabel(modelVoteAverage: cinemaHelper.modelVoteAverage)
+        configureVoteLabel(modelVoteCount: cinemaHelper.modelVoteCount)
+        addTapGestoreRecognizer()
+        selectionStyle = .none
     }
 
     // MARK: - Private methods
 
-    private func configureCinemaAvatarImageView(model: Result) {
+    private func configureCinemaAvatarImageView(imageData: Data) {
         addSubview(cinemaAvatarImageView)
         cinemaAvatarImageView.translatesAutoresizingMaskIntoConstraints = false
         cinemaAvatarImageView.contentMode = .scaleAspectFill
@@ -84,12 +59,14 @@ final class CinemaListTableViewCell: UITableViewCell {
             cinemaAvatarImageView.heightAnchor.constraint(equalToConstant: 200),
             cinemaAvatarImageView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -10),
         ])
+        guard let image = UIImage(data: imageData) else { return }
+        cinemaAvatarImageView.image = image
     }
 
-    private func configureCinemaNameLabel(model: Result) {
+    private func configureCinemaNameLabel(title: String) {
         addSubview(cinemaNameLabel)
         cinemaNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        cinemaNameLabel.text = model.title
+        cinemaNameLabel.text = title
         cinemaNameLabel.textAlignment = .center
         cinemaNameLabel.font = UIFont.boldSystemFont(ofSize: 30)
         cinemaNameLabel.textColor = .systemYellow
@@ -107,13 +84,14 @@ final class CinemaListTableViewCell: UITableViewCell {
         ])
     }
 
-    private func configureCinemaDescriptionLabel(model: Result) {
+    private func configureCinemaDescriptionLabel(modelOverview: String) {
         addSubview(cinemaDescriptionLabel)
         cinemaDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
-        cinemaDescriptionLabel.text = "\(model.overview)"
+        cinemaDescriptionLabel.text = "\(modelOverview)"
         cinemaDescriptionLabel.textAlignment = .justified
         cinemaDescriptionLabel.lineBreakMode = .byClipping
         cinemaDescriptionLabel.numberOfLines = 0
+        cinemaDescriptionLabel.textAlignment = .center
 
         NSLayoutConstraint.activate([
             cinemaDescriptionLabel.leadingAnchor.constraint(
@@ -127,10 +105,10 @@ final class CinemaListTableViewCell: UITableViewCell {
         ])
     }
 
-    private func configureRatingLabel(model: Result) {
+    private func configureRatingLabel(modelVoteAverage: Double) {
         addSubview(ratingLabel)
         ratingLabel.translatesAutoresizingMaskIntoConstraints = false
-        ratingLabel.text = "Оценка: \(model.voteAverage)"
+        ratingLabel.text = "Оценка: \(modelVoteAverage)"
         ratingLabel.numberOfLines = 0
 
         NSLayoutConstraint.activate([
@@ -144,21 +122,39 @@ final class CinemaListTableViewCell: UITableViewCell {
         ])
     }
 
-    private func configureVoteLabel(model: Result) {
-        addSubview(countOfVote)
-        countOfVote.translatesAutoresizingMaskIntoConstraints = false
-        countOfVote.text = "Оценили: \(model.voteCount) пользователей"
-        countOfVote.numberOfLines = 0
+    private func configureVoteLabel(modelVoteCount: Int) {
+        addSubview(countOfVoteLabel)
+        countOfVoteLabel.translatesAutoresizingMaskIntoConstraints = false
+        countOfVoteLabel.text = "Оценили: \(modelVoteCount) пользователей"
+        countOfVoteLabel.numberOfLines = 0
 
         NSLayoutConstraint.activate([
-            countOfVote.leadingAnchor.constraint(
+            countOfVoteLabel.leadingAnchor.constraint(
                 equalTo: cinemaAvatarImageView.leadingAnchor
             ),
-            countOfVote.topAnchor.constraint(equalTo: ratingLabel.bottomAnchor, constant: +10),
-            countOfVote.trailingAnchor.constraint(
+            countOfVoteLabel.topAnchor.constraint(equalTo: ratingLabel.bottomAnchor, constant: +10),
+            countOfVoteLabel.trailingAnchor.constraint(
                 equalTo: cinemaAvatarImageView.trailingAnchor
             ),
-            countOfVote.bottomAnchor.constraint(equalTo: bottomAnchor)
+            countOfVoteLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+    }
+
+    private func addTapGestoreRecognizer() {
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(gestoreAction))
+        cinemaAvatarImageView.isUserInteractionEnabled = true
+        cinemaAvatarImageView.addGestureRecognizer(recognizer)
+    }
+
+    // MARK: @objc private methods
+
+    @objc private func gestoreAction() {
+        guard
+            let tapAction = actionHandler,
+            let helper = cinemaDescriprion
+        else {
+            return
+        }
+        tapAction(helper)
     }
 }

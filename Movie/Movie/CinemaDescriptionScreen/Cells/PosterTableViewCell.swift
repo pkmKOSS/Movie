@@ -9,32 +9,26 @@ final class PosterTableViewCell: UITableViewCell {
 
     private var posterImageView = UIImageView()
 
-    // MARK: - Life cycle
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-
     // MARK: - Public methods
 
-    func configureCell() {
-        configurePosterImageView()
+    func configureCell(imageData: Data) {
+        configurePosterImageView(imageData: imageData)
+        selectionStyle = .none
     }
 
-    // MARK: Private methods
+    // MARK: - Private methods
 
-    private func configurePosterImageView() {
+    private func configurePosterImageView(imageData: Data) {
         addSubview(posterImageView)
         posterImageView.translatesAutoresizingMaskIntoConstraints = false
-        posterImageView.image = UIImage(named: "garrosh")
-        posterImageView.contentMode = .scaleAspectFit
+        posterImageView.image = UIImage(data: imageData)
+        posterImageView.contentMode = .scaleAspectFill
 
         NSLayoutConstraint.activate([
             posterImageView.topAnchor.constraint(equalTo: topAnchor),
             posterImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
             posterImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            posterImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            posterImageView.centerXAnchor.constraint(equalTo: centerXAnchor)
+            posterImageView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
 }

@@ -1,15 +1,13 @@
-// InfoAboutCinema.swift
+// NetworkModel.swift
 // Copyright © RoadMap. All rights reserved.
 
 import Foundation
 
-// MARK: - InfoAboutCinema
-
-/// Ответ с серва
-struct InfoAboutCinema: Codable {
+/// Сведения о грядущих новинках.
+struct InfoAboutCinema: Codable, CinemaInfoProtocol {
     let dates: Dates
     let page: Int
-    let results: [Result]
+    var results: [Result]
     let totalPages, totalResults: Int
 
     enum CodingKeys: String, CodingKey {
@@ -19,16 +17,25 @@ struct InfoAboutCinema: Codable {
     }
 }
 
-// MARK: - Dates
+/// Сведения о популярных кинофильмах.
+struct InfoAboutPopularCinema: Codable, CinemaInfoProtocol {
+    let page: Int
+    var results: [Result]
+    let totalPages, totalResults: Int
 
-/// фывфыв
+    enum CodingKeys: String, CodingKey {
+        case page, results
+        case totalPages = "total_pages"
+        case totalResults = "total_results"
+    }
+}
+
+/// Даты выхода грядущего релиза.
 struct Dates: Codable {
     let maximum, minimum: String
 }
 
-// MARK: - Result
-
-/// фывфыв
+/// Сведения о конкретном фильме.
 struct Result: Codable {
     let adult: Bool
     let backdropPath: String

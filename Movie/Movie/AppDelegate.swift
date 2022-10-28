@@ -13,7 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        let viewController = CinemaDescriptionViewController()
+        let viewController = CinemaListViewController()
         navController = UINavigationController(rootViewController: viewController)
         window?.rootViewController = navController
         window?.makeKeyAndVisible()

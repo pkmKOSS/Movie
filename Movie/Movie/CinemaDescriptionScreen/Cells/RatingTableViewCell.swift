@@ -21,12 +21,11 @@ final class RatingTableViewCell: UITableViewCell {
         avarageVote: Double
     ) {
         addSubviews()
-        configurePremieraDateLeftLabel()
-        configurePremieraDateRigthLabel()
-        configureShowCountLeftLabel()
-        configureShowCountRigthLabel(countOfVote: countOfVote)
-        configureСinemaRatingLeftLabel()
-        configureСinemaRatingRigthLabel(avarageVote: avarageVote)
+        configureViews(
+            countOfVote: countOfVote,
+            avarageVote: avarageVote
+        )
+        makeLayout()
     }
 
     // MARK: - Private methods
@@ -38,15 +37,39 @@ final class RatingTableViewCell: UITableViewCell {
         addSubview(showCountRigthLabel)
         addSubview(cinemaRatingLeftLabel)
         addSubview(cinemaRatingRigthLabel)
+    }
 
+    private func configreContentView() {
         backgroundColor = .systemYellow
         selectionStyle = .none
+    }
+
+    private func configureViews(countOfVote: Int,
+                                avarageVote: Double) {
+        configreContentView()
+        configurePremieraDateLeftLabel()
+        configurePremieraDateRigthLabel()
+        configureShowCountLeftLabel()
+        configureShowCountRigthLabel(countOfVote: countOfVote)
+        configureСinemaRatingLeftLabel()
+        configureСinemaRatingRigthLabel(avarageVote: avarageVote)
+    }
+
+    private func makeLayout() {
+        makePremieraDateLeftLabelLayout()
+        makePremieraDateRigthLabelLayout()
+        makeShowCountLeftLabelLayout()
+        makeShowCountRigthLabelLayout()
+        makeCinemaRatingLeftLabelLayout()
+        makeCinemaRatingRigthLabelLayout()
     }
 
     private func configurePremieraDateLeftLabel() {
         premieraDateLeftLabel.translatesAutoresizingMaskIntoConstraints = false
         premieraDateLeftLabel.text = StringConstants.premieraDateLeftLabelText
+    }
 
+    private func makePremieraDateLeftLabelLayout() {
         NSLayoutConstraint.activate([
             premieraDateLeftLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
             premieraDateLeftLabel.topAnchor.constraint(equalTo: topAnchor, constant: +15),
@@ -59,7 +82,9 @@ final class RatingTableViewCell: UITableViewCell {
         premieraDateRigthLabel.translatesAutoresizingMaskIntoConstraints = false
         premieraDateRigthLabel.text = StringConstants.premieraDateRigthLabelText
         premieraDateRigthLabel.textAlignment = .right
+    }
 
+    private func makePremieraDateRigthLabelLayout() {
         NSLayoutConstraint.activate([
             premieraDateRigthLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5),
             premieraDateRigthLabel.topAnchor.constraint(equalTo: topAnchor, constant: +15),
@@ -71,7 +96,9 @@ final class RatingTableViewCell: UITableViewCell {
     private func configureShowCountLeftLabel() {
         showCountLeftLabel.translatesAutoresizingMaskIntoConstraints = false
         showCountLeftLabel.text = StringConstants.showCountLeftLabelText
+    }
 
+    private func makeShowCountLeftLabelLayout() {
         NSLayoutConstraint.activate([
             showCountLeftLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
             showCountLeftLabel.topAnchor.constraint(equalTo: premieraDateLeftLabel.bottomAnchor),
@@ -84,7 +111,9 @@ final class RatingTableViewCell: UITableViewCell {
         showCountRigthLabel.translatesAutoresizingMaskIntoConstraints = false
         showCountRigthLabel.text = "\(countOfVote)"
         showCountRigthLabel.textAlignment = .right
+    }
 
+    private func makeShowCountRigthLabelLayout() {
         NSLayoutConstraint.activate([
             showCountRigthLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5),
             showCountRigthLabel.topAnchor.constraint(equalTo: premieraDateRigthLabel.bottomAnchor),
@@ -96,7 +125,9 @@ final class RatingTableViewCell: UITableViewCell {
     private func configureСinemaRatingLeftLabel() {
         cinemaRatingLeftLabel.translatesAutoresizingMaskIntoConstraints = false
         cinemaRatingLeftLabel.text = StringConstants.cinemaRatingLeftLabelText
+    }
 
+    private func makeCinemaRatingLeftLabelLayout() {
         NSLayoutConstraint.activate([
             cinemaRatingLeftLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
             cinemaRatingLeftLabel.topAnchor.constraint(equalTo: showCountLeftLabel.bottomAnchor),
@@ -110,7 +141,9 @@ final class RatingTableViewCell: UITableViewCell {
         cinemaRatingRigthLabel.translatesAutoresizingMaskIntoConstraints = false
         cinemaRatingRigthLabel.text = "\(avarageVote)"
         cinemaRatingRigthLabel.textAlignment = .right
+    }
 
+    private func makeCinemaRatingRigthLabelLayout() {
         NSLayoutConstraint.activate([
             cinemaRatingRigthLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5),
             cinemaRatingRigthLabel.topAnchor.constraint(equalTo: showCountRigthLabel.bottomAnchor),

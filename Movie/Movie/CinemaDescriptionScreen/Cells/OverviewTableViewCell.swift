@@ -12,7 +12,14 @@ final class OverviewTableViewCell: UITableViewCell {
     // MARK: - Public methods
 
     func configureCell(overViewText: String) {
+        configureContentView()
         configureOverViewLabel(overViewText: overViewText)
+        makeOverviewLabelLayout()
+    }
+
+    // MARK: - Private methods
+
+    private func configureContentView() {
         contentView.layer.shadowColor = UIColor.systemYellow.cgColor
         contentView.layer.shadowRadius = 3.0
         contentView.layer.shadowOpacity = 3.0
@@ -22,9 +29,7 @@ final class OverviewTableViewCell: UITableViewCell {
         selectionStyle = .none
     }
 
-    // MARK: - Private methods
-
-    func configureOverViewLabel(overViewText: String) {
+    private func configureOverViewLabel(overViewText: String) {
         addSubview(overviewLabel)
         overviewLabel.translatesAutoresizingMaskIntoConstraints = false
         overviewLabel.numberOfLines = 0
@@ -37,7 +42,9 @@ final class OverviewTableViewCell: UITableViewCell {
         overviewLabel.layer.shadowOffset = .zero
         overviewLabel.layer.shadowRadius = 15
         overviewLabel.layer.cornerRadius = 5
+    }
 
+    private func makeOverviewLabelLayout() {
         NSLayoutConstraint.activate([
             overviewLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             overviewLabel.topAnchor.constraint(equalTo: topAnchor),

@@ -15,15 +15,15 @@ final class CinemaDescriptionViewController: UIViewController {
     }
 
     enum CellIdentifier: String {
-        case posterCell = "PosterTableViewCell"
-        case buttonsCell = "ButtonsTableViewCell"
-        case overviewCell = "OverviewTableViewCell"
-        case ratingCell = "RatingTableViewCell"
+        case posterCellIdentifier = "PosterTableViewCell"
+        case buttonsCellIdentifier = "ButtonsTableViewCell"
+        case overviewCellIdentifier = "OverviewTableViewCell"
+        case ratingCellIdentifier = "RatingTableViewCell"
     }
 
     // MARK: - Private properties
 
-    private let helper: DescriptionScreenHelper
+    private let descriptionHelper: DescriptionScreenHelper
     private let cellTypes: [CellTypes] = [.posterCell, .buttonsCell, .overviewCell, .ratingCell]
 
     // MARK: - Private visual components
@@ -40,7 +40,7 @@ final class CinemaDescriptionViewController: UIViewController {
     // MARK: Init
 
     init(helper: DescriptionScreenHelper) {
-        self.helper = helper
+        self.descriptionHelper = helper
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -52,16 +52,27 @@ final class CinemaDescriptionViewController: UIViewController {
     // MARK: - Private methods
 
     private func configureScene() {
+        tableView.separatorColor = .clear
+        addSubview()
+        makeTableViewLayout()
+        configureTableViewDelegates()
+    }
+
+    private func addSubview() {
         view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+    }
+
+    private func configureTableViewDelegates() {
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.separatorColor = .clear
+    }
 
-        tableView.register(PosterTableViewCell.self, forCellReuseIdentifier: CellIdentifier.posterCell.rawValue)
-        tableView.register(ButtonsTableViewCell.self, forCellReuseIdentifier: CellIdentifier.buttonsCell.rawValue)
-        tableView.register(OverviewTableViewCell.self, forCellReuseIdentifier: CellIdentifier.overviewCell.rawValue)
-        tableView.register(RatingTableViewCell.self, forCellReuseIdentifier: CellIdentifier.ratingCell.rawValue)
+    private func makeTableViewLayout() {
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(PosterTableViewCell.self, forCellReuseIdentifier: CellIdentifier.posterCellIdentifier.rawValue)
+        tableView.register(ButtonsTableViewCell.self, forCellReuseIdentifier: CellIdentifier.buttonsCellIdentifier.rawValue)
+        tableView.register(OverviewTableViewCell.self, forCellReuseIdentifier: CellIdentifier.overviewCellIdentifier.rawValue)
+        tableView.register(RatingTableViewCell.self, forCellReuseIdentifier: CellIdentifier.ratingCellIdentifier.rawValue)
 
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -84,16 +95,16 @@ extension CinemaDescriptionViewController: UITableViewDataSource, UITableViewDel
         case .posterCell:
             guard let
                 cell = tableView.dequeueReusableCell(
-                    withIdentifier: CellIdentifier.posterCell.rawValue,
+                    withIdentifier: CellIdentifier.posterCellIdentifier.rawValue,
                     for: indexPath
                 ) as? PosterTableViewCell
             else { return UITableViewCell() }
-            cell.configureCell(imageData: helper.imageData)
+            cell.configureCell(imageData: descriptionHelper.imageData)
             return cell
         case .buttonsCell:
             guard let
                 cell = tableView.dequeueReusableCell(
-                    withIdentifier: CellIdentifier.buttonsCell.rawValue,
+                    withIdentifier: CellIdentifier.buttonsCellIdentifier.rawValue,
                     for: indexPath
                 ) as? ButtonsTableViewCell
             else { return UITableViewCell() }
@@ -102,22 +113,22 @@ extension CinemaDescriptionViewController: UITableViewDataSource, UITableViewDel
         case .overviewCell:
             guard let
                 cell = tableView.dequeueReusableCell(
-                    withIdentifier: CellIdentifier.overviewCell.rawValue,
+                    withIdentifier: CellIdentifier.overviewCellIdentifier.rawValue,
                     for: indexPath
                 ) as? OverviewTableViewCell
             else { return UITableViewCell() }
-            cell.configureCell(overViewText: helper.modelOverview)
+            cell.configureCell(overViewText: descriptionHelper.modelOverview)
             return cell
         case .ratingCell:
             guard let
                 cell = tableView.dequeueReusableCell(
-                    withIdentifier: CellIdentifier.ratingCell.rawValue,
+                    withIdentifier: CellIdentifier.ratingCellIdentifier.rawValue,
                     for: indexPath
                 ) as? RatingTableViewCell
             else { return UITableViewCell() }
             cell.configureCell(
-                countOfVote: helper.modelVoteCount,
-                avarageVote: helper.modelVoteAverage
+                countOfVote: descriptionHelper.modelVoteCount,
+                avarageVote: descriptionHelper.modelVoteAverage
             )
             return cell
         default:

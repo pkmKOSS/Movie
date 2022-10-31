@@ -11,7 +11,7 @@
 		6B27D2B7290C4C1A0088884E /* StringConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B27D2B6290C4C1A0088884E /* StringConstants.swift */; };
 		6B2EC31C29085B3900DADFD1 /* CinemaListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B2EC31B29085B3900DADFD1 /* CinemaListCell.swift */; };
 		6B2EC31F29085D7E00DADFD1 /* NetworkModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B2EC31E29085D7E00DADFD1 /* NetworkModel.swift */; };
-		6B2EC32229086DA100DADFD1 /* NSConstraint+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B2EC32129086DA100DADFD1 /* NSConstraint+.swift */; };
+		6B2EC32229086DA100DADFD1 /* NSConstraint+setPriorityFunc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B2EC32129086DA100DADFD1 /* NSConstraint+setPriorityFunc.swift */; };
 		6BACC491290B04D80011D30E /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BACC490290B04D80011D30E /* NetworkManager.swift */; };
 		6BACC495290B22120011D30E /* CinemaProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BACC494290B22120011D30E /* CinemaProtocol.swift */; };
 		6BB0AEAF290847E400F4B2B9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BB0AEAE290847E400F4B2B9 /* AppDelegate.swift */; };
@@ -25,7 +25,7 @@
 		6BF3413B2909B7C7001448A2 /* OverviewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BF3413A2909B7C7001448A2 /* OverviewTableViewCell.swift */; };
 		6BF3413D2909BACA001448A2 /* RatingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BF3413C2909BACA001448A2 /* RatingTableViewCell.swift */; };
 		6BF5F488290B7FEE00A8588A /* DescriptionScreenHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BF5F487290B7FEE00A8588A /* DescriptionScreenHelper.swift */; };
-		6BF5F48A290B8B0B00A8588A /* Array+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BF5F489290B8B0B00A8588A /* Array+.swift */; };
+		6BF5F48A290B8B0B00A8588A /* Array+safelyAccesToElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BF5F489290B8B0B00A8588A /* Array+safelyAccesToElement.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,7 +33,7 @@
 		6B27D2B6290C4C1A0088884E /* StringConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringConstants.swift; sourceTree = "<group>"; };
 		6B2EC31B29085B3900DADFD1 /* CinemaListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinemaListCell.swift; sourceTree = "<group>"; };
 		6B2EC31E29085D7E00DADFD1 /* NetworkModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkModel.swift; sourceTree = "<group>"; };
-		6B2EC32129086DA100DADFD1 /* NSConstraint+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSConstraint+.swift"; sourceTree = "<group>"; };
+		6B2EC32129086DA100DADFD1 /* NSConstraint+setPriorityFunc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSConstraint+setPriorityFunc.swift"; sourceTree = "<group>"; };
 		6BACC490290B04D80011D30E /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		6BACC494290B22120011D30E /* CinemaProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinemaProtocol.swift; sourceTree = "<group>"; };
 		6BB0AEAB290847E400F4B2B9 /* Movie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Movie.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -49,7 +49,7 @@
 		6BF3413A2909B7C7001448A2 /* OverviewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewTableViewCell.swift; sourceTree = "<group>"; };
 		6BF3413C2909BACA001448A2 /* RatingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingTableViewCell.swift; sourceTree = "<group>"; };
 		6BF5F487290B7FEE00A8588A /* DescriptionScreenHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptionScreenHelper.swift; sourceTree = "<group>"; };
-		6BF5F489290B8B0B00A8588A /* Array+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+.swift"; sourceTree = "<group>"; };
+		6BF5F489290B8B0B00A8588A /* Array+safelyAccesToElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+safelyAccesToElement.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,8 +100,8 @@
 		6B2EC32029086D8600DADFD1 /* Extesion */ = {
 			isa = PBXGroup;
 			children = (
-				6B2EC32129086DA100DADFD1 /* NSConstraint+.swift */,
-				6BF5F489290B8B0B00A8588A /* Array+.swift */,
+				6B2EC32129086DA100DADFD1 /* NSConstraint+setPriorityFunc.swift */,
+				6BF5F489290B8B0B00A8588A /* Array+safelyAccesToElement.swift */,
 			);
 			path = Extesion;
 			sourceTree = "<group>";
@@ -303,9 +303,9 @@
 				6BB0AEAF290847E400F4B2B9 /* AppDelegate.swift in Sources */,
 				6BACC495290B22120011D30E /* CinemaProtocol.swift in Sources */,
 				6B05A599290C589B00D30201 /* TypeAlias.swift in Sources */,
-				6B2EC32229086DA100DADFD1 /* NSConstraint+.swift in Sources */,
+				6B2EC32229086DA100DADFD1 /* NSConstraint+setPriorityFunc.swift in Sources */,
 				6BF34139290995F9001448A2 /* ButtonsTableViewCell.swift in Sources */,
-				6BF5F48A290B8B0B00A8588A /* Array+.swift in Sources */,
+				6BF5F48A290B8B0B00A8588A /* Array+safelyAccesToElement.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -5,6 +5,7 @@ import UIKit
 
 /// Ячейка с паспортом.
 final class PosterTableViewCell: UITableViewCell {
+
     // MARK: - Private visual components
 
     private var posterImageView = UIImageView()
@@ -13,7 +14,8 @@ final class PosterTableViewCell: UITableViewCell {
 
     func configureCell(imageData: Data) {
         configurePosterImageView(imageData: imageData)
-        selectionStyle = .none
+        makePosterImageViewLayout()
+        configureContentView()
     }
 
     // MARK: - Private methods
@@ -23,12 +25,18 @@ final class PosterTableViewCell: UITableViewCell {
         posterImageView.translatesAutoresizingMaskIntoConstraints = false
         posterImageView.image = UIImage(data: imageData)
         posterImageView.contentMode = .scaleAspectFill
+    }
 
+    private func makePosterImageViewLayout() {
         NSLayoutConstraint.activate([
             posterImageView.topAnchor.constraint(equalTo: topAnchor),
             posterImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
             posterImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             posterImageView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
+    }
+
+    private func configureContentView() {
+        selectionStyle = .none
     }
 }

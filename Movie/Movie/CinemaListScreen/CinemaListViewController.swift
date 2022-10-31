@@ -5,49 +5,37 @@ import UIKit
 
 /// Экран со списком кинофильмов.
 final class CinemaListViewController: UIViewController {
+
     // MARK: - Private types
 
     enum CellIdentifiers: String {
-        case cinemaList = "CinemaListCell"
+        case cinemaListIdentifier = "CinemaListCell"
     }
 
     // MARK: - Private properties
+    private let condition = NSCondition()
 
-    private var model: CinemaInfoProtocol? {
+    private var cinemaInfo: CinemaInfoProtocol? {
         willSet {
             DispatchQueue.main.async {
-                self.descriptionScreenHelperArray = newValue?.results.map { result in
-                    var imageData = Data()
-                    let condition = NSCondition()
+                self.descriptionScreenHelper = newValue?.results.map { result in
+                        let imageData = self.getImage(posterPath: result.posterPath, size: .w500)
 
-                    NetworkManager.manager.getImage(
-                        posterPath: result.posterPath,
-                        size: .w500
-                    ) { result in
-                        switch result {
-                        case let .succes(data):
-                            imageData = data
-                            condition.signal()
-                        case let .failure(cinema):
-                            print(cinema.localizedDescription)
-                        }
-                    }
+                        self.condition.wait()
 
-                    condition.wait()
-
-                    return DescriptionScreenHelper(
-                        title: result.title,
-                        imageData: imageData,
-                        modelOverview: result.overview,
-                        modelVoteAverage: result.voteAverage,
-                        modelVoteCount: result.voteCount
-                    )
+                        return DescriptionScreenHelper(
+                            title: result.title,
+                            imageData: imageData,
+                            modelOverview: result.overview,
+                            modelVoteAverage: result.voteAverage,
+                            modelVoteCount: result.voteCount
+                        )
                 }
             }
         }
     }
 
-    private var descriptionScreenHelperArray: [DescriptionScreenHelper]? {
+    private var descriptionScreenHelper: [DescriptionScreenHelper]? {
         didSet {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
@@ -88,28 +76,37 @@ final class CinemaListViewController: UIViewController {
         view.backgroundColor = .white
         configureCinemaListTableView()
         configureShowUpcomingCinema()
-        configureShowPopularCinema()
+        configureShowPopularCinemaButton()
         configureShowNewCinema()
+        makeLayout()
+    }
+
+    private func makeLayout() {
+        makeCinemaListTableViewLayout()
+        makeShowUpcomingCinemaLayout()
+        makeShowPopularCinemaButtonLayout()
+        makeShowNewCinemaLayout()
     }
 
     private func configureCinemaListTableView() {
         cinemaListTableView.separatorColor = .white
         cinemaListTableView.dataSource = self
         cinemaListTableView.delegate = self
-
         cinemaListTableView.translatesAutoresizingMaskIntoConstraints = false
 
+        cinemaListTableView.register(
+            CinemaListTableViewCell.self,
+            forCellReuseIdentifier: CellIdentifiers.cinemaListIdentifier.rawValue
+        )
+    }
+
+    private func makeCinemaListTableViewLayout() {
         NSLayoutConstraint.activate([
             cinemaListTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             cinemaListTableView.topAnchor.constraint(equalTo: showUpcomingCinemaButton.bottomAnchor, constant: 10),
             cinemaListTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             cinemaListTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
-
-        cinemaListTableView.register(
-            CinemaListTableViewCell.self,
-            forCellReuseIdentifier: CellIdentifiers.cinemaList.rawValue
-        )
     }
 
     private func configureShowUpcomingCinema() {
@@ -119,7 +116,9 @@ final class CinemaListViewController: UIViewController {
         showUpcomingCinemaButton.layer.cornerRadius = 5
         showUpcomingCinemaButton.clipsToBounds = true
         showUpcomingCinemaButton.addTarget(self, action: #selector(getUpcomingCinemaAction), for: .touchUpInside)
+    }
 
+    private func makeShowUpcomingCinemaLayout() {
         NSLayoutConstraint.activate([
             showUpcomingCinemaButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
             showUpcomingCinemaButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
@@ -127,14 +126,16 @@ final class CinemaListViewController: UIViewController {
         ])
     }
 
-    private func configureShowPopularCinema() {
+    private func configureShowPopularCinemaButton() {
         showPopularCinemaButton.translatesAutoresizingMaskIntoConstraints = false
         showPopularCinemaButton.setTitle(StringConstants.showPopularCinemaTitle, for: .normal)
         showPopularCinemaButton.backgroundColor = .systemYellow
         showPopularCinemaButton.layer.cornerRadius = 5
         showPopularCinemaButton.clipsToBounds = true
         showPopularCinemaButton.addTarget(self, action: #selector(getPopularCinemaAction), for: .touchUpInside)
+    }
 
+    private func makeShowPopularCinemaButtonLayout() {
         NSLayoutConstraint.activate([
             showPopularCinemaButton.leadingAnchor.constraint(
                 equalTo: showUpcomingCinemaButton.trailingAnchor,
@@ -146,12 +147,6 @@ final class CinemaListViewController: UIViewController {
     }
 
     private func configureShowNewCinema() {
-        showNewCinemaButton.translatesAutoresizingMaskIntoConstraints = false
-        showNewCinemaButton.setTitle(StringConstants.showNewCinemaTitle, for: .normal)
-        showNewCinemaButton.backgroundColor = .systemYellow
-        showNewCinemaButton.layer.cornerRadius = 5
-        showNewCinemaButton.clipsToBounds = true
-
         NSLayoutConstraint.activate([
             showNewCinemaButton.leadingAnchor.constraint(equalTo: showPopularCinemaButton.trailingAnchor, constant: +5),
             showNewCinemaButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: +5),
@@ -159,11 +154,19 @@ final class CinemaListViewController: UIViewController {
         ])
     }
 
+    private func makeShowNewCinemaLayout() {
+        showNewCinemaButton.translatesAutoresizingMaskIntoConstraints = false
+        showNewCinemaButton.setTitle(StringConstants.showNewCinemaTitle, for: .normal)
+        showNewCinemaButton.backgroundColor = .systemYellow
+        showNewCinemaButton.layer.cornerRadius = 5
+        showNewCinemaButton.clipsToBounds = true
+    }
+
     private func getRequest() {
         NetworkManager.manager.getCinema(typeOfRequest: .getPopular) { result in
             switch result {
             case let .succes(cinema):
-                self.model = cinema as? CinemaInfoProtocol
+                self.cinemaInfo = cinema as? CinemaInfoProtocol
             case let .failure(cinema):
                 print("error: - \(cinema.localizedDescription)")
             }
@@ -181,13 +184,33 @@ final class CinemaListViewController: UIViewController {
         }
     }
 
+    private func getImage(
+        posterPath: String,
+        size: SizeOfImages) -> Data {
+        var imageData = Data()
+        NetworkManager.manager.getImage(
+            posterPath: posterPath,
+            size: size
+        ) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case let .succes(data):
+                imageData = data
+                self.condition.signal()
+            case let .failure(cinema):
+                print(cinema.localizedDescription)
+            }
+        }
+            return imageData
+    }
+
     // MARK: - @objc private methods
 
     @objc private func getUpcomingCinemaAction() {
         NetworkManager.manager.getCinema(typeOfRequest: .getUpcoming) { result in
             switch result {
             case let .succes(cinema):
-                self.model = cinema as? InfoAboutCinema
+                self.cinemaInfo = cinema as? InfoAboutCinema
             case let .failure(cinema):
                 print("error: - \(cinema.localizedDescription)")
             }
@@ -201,7 +224,7 @@ final class CinemaListViewController: UIViewController {
         NetworkManager.manager.getCinema(typeOfRequest: .getPopular) { result in
             switch result {
             case let .succes(cinema):
-                self.model = cinema as? InfoAboutPopularCinema
+                self.cinemaInfo = cinema as? InfoAboutPopularCinema
             case let .failure(cinema):
                 print("error: - \(cinema.localizedDescription)")
             }
@@ -215,7 +238,7 @@ final class CinemaListViewController: UIViewController {
         NetworkManager.manager.getCinema(typeOfRequest: .getNew) { result in
             switch result {
             case let .succes(cinema):
-                self.model = cinema as? InfoAboutCinema
+                self.cinemaInfo = cinema as? InfoAboutCinema
             case let .failure(cinema):
                 print("error: - \(cinema.localizedDescription)")
             }
@@ -229,18 +252,18 @@ final class CinemaListViewController: UIViewController {
 // Имплементация UITableViewDelegate, UITableViewDataSource
 extension CinemaListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let count = model?.results.count else { return 0 }
+        guard let count = cinemaInfo?.results.count else { return 0 }
         return count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView
             .dequeueReusableCell(
-                withIdentifier: CellIdentifiers.cinemaList.rawValue,
+                withIdentifier: CellIdentifiers.cinemaListIdentifier.rawValue,
                 for: indexPath
             ) as? CinemaListTableViewCell
         else { return UITableViewCell() }
-        guard let descriptionArray = descriptionScreenHelperArray else { return UITableViewCell() }
+        guard let descriptionArray = descriptionScreenHelper else { return UITableViewCell() }
         guard let dataForDescriptionScreen = descriptionArray[safe: indexPath.row] else { return UITableViewCell() }
         cell.configureCell(
             description: dataForDescriptionScreen,

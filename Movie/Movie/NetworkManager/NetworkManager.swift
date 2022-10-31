@@ -20,21 +20,21 @@ final class NetworkManager {
         switch typeOfRequest {
         case .getUpcoming:
             sendRequest(
-                urlString: URLStringForRequest.getUpcoming.rawValue,
+                urlString: URLStrings.getUpcoming.rawValue,
                 model: InfoAboutCinema.self
             ) { result in
                 complition(result)
             }
         case .getPopular:
             sendRequest(
-                urlString: URLStringForRequest.getPopular.rawValue,
+                urlString: URLStrings.getPopular.rawValue,
                 model: InfoAboutPopularCinema.self
             ) { result in
                 complition(result)
             }
         case .getNew:
             sendRequest(
-                urlString: URLStringForRequest.getNew.rawValue,
+                urlString: URLStrings.getNew.rawValue,
                 model: InfoAboutCinema.self
             ) { result in
                 complition(result)
@@ -117,7 +117,7 @@ enum SizeOfImages: String {
 }
 
 /// Ссылки для запросов.
-enum URLStringForRequest: String {
+enum URLStrings: String {
     case getUpcoming =
         "https://api.themoviedb.org/3/movie/upcoming?api_key=c7f7d1dc5a6aa58fd2f3602748ad9c64&language=ru&page-1"
     case getPopular =
